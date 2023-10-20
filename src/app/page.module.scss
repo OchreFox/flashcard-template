@@ -1,0 +1,97 @@
+@use "sass:math";
+@use "sass:list";
+
+// From: https://stackoverflow.com/questions/26634201/add-stroke-around-text-on-the-outside-with-css/72876332#72876332
+@function text-outline($offset, $color, $num-steps: 16) {
+  $shadows: ();
+  @for $i from 0 to $num-steps {
+    $angle: $i * 360deg / $num-steps;
+    $x: calc(#{math.cos($angle)} * #{$offset});
+    $y: calc(#{math.sin($angle)} * #{$offset});
+    $shadows: list.append($shadows, #{$x} #{$y} 0 #{$color}, $separator: comma);
+  }
+  @return $shadows;
+}
+
+@function blend-colors($color1, $color2, $steps) {
+  // Returns a list of colors blended between two colors (fade from color1 to color2)
+  $colors: ();
+  @for $i from 0 through $steps {
+    $colors: append($colors, mix($color2, $color1, percentage($i / $steps)));
+  }
+  @return $colors;
+}
+
+@mixin text-3d($main-color, $secondary-color, $depth: 10) {
+  $ts: ();
+  $offset: 0.1rem;
+  $colors: blend-colors($main-color, $secondary-color, $depth);
+  @for $i from 1 through $depth {
+    $ts: $ts, $i * 1px $i * 1px 0 nth($colors, $i);
+  }
+  // Add a text outline
+  $text-outline: text-outline($offset, $color: $main-color, $num-steps: 32);
+
+  text-shadow: $text-outline, $ts, 0 0 50px, 0 0 55px;
+}
+
+// Convert a hex color to a URL encoded string
+@function encode-color($string) {
+  @if type-of($string) == "color" and str-index(#{$string}, "#") == 1 {
+    $hex: str-slice(ie-hex-str($string), 4);
+    $string: unquote("#{$hex}");
+
+    @return "%23" + $string;
+  }
+
+  @return $string;
+}
+
+.comic {
+  $main-color: #000000;
+  $secondary-color: #1e293b;
+
+  @include text-3d($main-color, $secondary-color, 10);
+}
+
+.toolbar {
+  $main-color: #9f1239;
+  $dot-color: #250e17;
+  $dot-opacity: 0.2;
+  clip-path: polygon(0% 5%, 100% 0%, 98% 95%, 0% 100%);
+  background: url('data:image/svg+xml;utf8,<svg width="100" height="100" transform="rotate(0)" opacity="#{$dot-opacity}" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="#{encode-color($dot-color)}"><circle cx="25" cy="25" r="12.5"/><circle cx="75" cy="75" r="12.5"/><circle cx="75" cy="25" r="12.5"/><circle cx="25" cy="75" r="12.5"/></g></svg>'),
+    $main-color;
+  background-size: 10px, 100%;
+}
+
+.header {
+  //   clip-path: polygon(2% 10%, 100% 0%, 98% 90%, 0% 100%);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(2% 10%, 100% 2%, 98% 90%, 0% 100%);
+    background: linear-gradient(90deg, #dd7a39 0%, #6ccff6 100%);
+    z-index: -1;
+  }
+
+  // SVG Overlay
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(2% 10%, 100% 0%, 98% 90%, 0% 100%);
+    background: url("/low-poly-grid-overlay.svg") no-repeat center center;
+    background-size: cover;
+    z-index: -1;
+    opacity: 0.3;
+    mix-blend-mode: overlay;
+  }
+}
