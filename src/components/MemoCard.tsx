@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Variants, motion } from "framer-motion";
-import { getOppositeOrientation, getTranslatedOrientation } from "@/app/page";
+import { getOppositeOrientation, getTranslatedOrientation } from "@/lib/shared";
 import { IconX } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import StyledButton from "./Button/Button";

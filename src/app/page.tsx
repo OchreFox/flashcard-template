@@ -25,16 +25,7 @@ import { Separator } from "@/components/ui/separator";
 import * as Portal from "@radix-ui/react-portal";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-
-export const getOppositeOrientation = (orientation: Orientation) => {
-  return orientation === Orientation.Front
-    ? Orientation.Back
-    : Orientation.Front;
-};
-
-export const getTranslatedOrientation = (orientation: Orientation) => {
-  return orientation === Orientation.Front ? "Frente" : "Reverso";
-};
+import { getOppositeOrientation, getTranslatedOrientation } from "@/lib/shared";
 
 const staggerItems = stagger(0.01, { startDelay: 0.02 });
 
