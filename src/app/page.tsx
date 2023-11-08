@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, stagger, animate } from "framer-motion";
+import { AnimatePresence, motion, stagger, animate, m } from "framer-motion";
 import MemoCard from "@/components/MemoCard";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
@@ -91,7 +91,7 @@ export default function Home() {
   }, [currentOrientation, totalCards]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between px-24 py-8 bg-gray-200 dark:bg-slate-900 text-black dark:text-white">
+    <main className="flex flex-col items-center justify-between min-h-screen px-24 py-8 text-black bg-gray-200 dark:bg-slate-900 dark:text-white">
       {/* Alert Dialog */}
       <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
         <AlertDialogContent>
@@ -111,7 +111,7 @@ export default function Home() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <div className="w-full grid grid-cols-3 gap-2 place-items-center">
+      <div className="grid w-full grid-cols-3 gap-2 place-items-center">
         {/* Header */}
         <div
           className={clsx(
@@ -131,14 +131,14 @@ export default function Home() {
         <div className="flex gap-4">
           <Button variant="secondary" onClick={onFlip}>
             <motion.span
-              className="inline-block transform origin-center mr-2"
+              className="inline-block mr-2 origin-center transform"
               animate={
                 currentOrientation === Orientation.Front
                   ? { rotateY: 0 }
                   : { rotateY: 180 }
               }
             >
-              <Undo2 className="h-4 w-4" />
+              <Undo2 className="w-4 h-4" />
             </motion.span>
             Girar al{" "}
             {getTranslatedOrientation(
@@ -149,7 +149,7 @@ export default function Home() {
         </div>
       </div>
       {/* Main View */}
-      <div className="flex gap-4 w-full">
+      <div className="flex w-full gap-4">
         {/* Toolbar */}
         {hasHydrated ? (
           <div className="flex flex-col gap-2 w-72">
@@ -177,7 +177,7 @@ export default function Home() {
               step={1}
               onValueChange={(value) => setCols(value[0])}
             />
-            <Link className="mt-8 w-full" href="/print">
+            <Link className="w-full mt-8" href="/print">
               <Button className="w-full">
                 <Printer className="w-4 h-4 mr-2" />
                 Imprimir PDF
@@ -204,7 +204,7 @@ export default function Home() {
           </div>
         )}
         {/* Cards */}
-        <div className="grow w-full">
+        <div className="w-full grow">
           {/* Overlay with a flippable card that the user can click to edit the text on the card,
       And a button to flip the card over to see the back of the card. */}
           <AnimatePresence>
@@ -222,7 +222,7 @@ export default function Home() {
 
           {hasHydrated ? (
             <motion.ul
-              className="main-view border border-gray-900 shadow-xl bg-white dark:bg-gray-700 grid gap-2"
+              className="grid gap-2 bg-white border border-gray-900 shadow-xl main-view dark:bg-gray-700"
               style={{
                 gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
                 gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
@@ -234,29 +234,49 @@ export default function Home() {
                     key={i}
                     layoutId={`card-${i}`}
                     layout
-                    className="inline-flex items-center justify-center relative z-0 flip-card hover:shadow-xl  hover:ring-blue-500 hover:ring-2 hover:border-blue-800"
+                    className="relative z-0 inline-flex items-center justify-center flip-card hover:shadow-xl hover:ring-blue-500 hover:ring-2 hover:border-blue-800"
                     initial={{ scale: 1 }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <div className="card-inner w-full h-full absolute">
+                    <div className="absolute w-full h-full card-inner">
                       {/* Card background */}
                       <motion.button
-                        className="card-front absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-100 dark:bg-gray-600 backface-hidden"
+                        className={clsx(
+                          "card-front absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-100 dark:bg-gray-600 backface-hidden text-left",
+                          styles["fluid-card"]
+                        )}
                         onClick={() => {
                           setSelectedCard(cards[i]);
                         }}
                       >
-                        {cards[i].front}
+                        <p
+                          className={clsx(
+                            "w-full h-full",
+                            cards[i].front.length > 50 ? "text-xs" : "text-sm"
+                          )}
+                        >
+                          {cards[i].front}
+                        </p>
                       </motion.button>
                       <motion.button
-                        className="card-back absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-300 dark:bg-gray-800 backface-hidden"
+                        className={clsx(
+                          "card-back absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-300 dark:bg-gray-800 backface-hidden text-left",
+                          styles["fluid-card"]
+                        )}
                         onClick={() => {
                           setSelectedCard(cards[i]);
                         }}
                         style={{ rotateY: 180 }}
                       >
-                        {cards[i].back}
+                        <p
+                          className={clsx(
+                            "w-full h-full",
+                            cards[i].back.length > 50 ? "text-xs" : "text-sm"
+                          )}
+                        >
+                          {cards[i].back}
+                        </p>
                       </motion.button>
                     </div>
                   </motion.li>
@@ -264,7 +284,7 @@ export default function Home() {
               })}
             </motion.ul>
           ) : (
-            <ul className="main-view border border-gray-900 shadow-xl bg-white dark:bg-gray-700 grid gap-2 grid-cols-6 grid-rows-8">
+            <ul className="grid grid-cols-6 gap-2 bg-white border border-gray-900 shadow-xl main-view dark:bg-gray-700 grid-rows-8">
               <GridSkeleton />
             </ul>
           )}

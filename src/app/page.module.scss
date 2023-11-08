@@ -95,3 +95,9 @@
     mix-blend-mode: overlay;
   }
 }
+
+.fluid-card > p {
+  white-space: pre-wrap;
+  display: block;
+  word-break: break-word;
+}

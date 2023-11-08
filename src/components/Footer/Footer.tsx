@@ -12,14 +12,14 @@ export default function Footer() {
   return (
     <footer
       className={clsx(
-        "body-font font-display relative mx-auto flex flex-col items-center border-t-2 border-brand-default bg-gray-800/60 px-5 py-6 text-gray-100 print:hidden sm:flex-row sm:py-2 print:hidden",
+        "body-font font-display relative mx-auto flex flex-col items-center border-t-2 border-brand-default bg-gray-800 px-5 py-6 text-gray-100 print:hidden sm:flex-row sm:py-2 print:hidden",
         styles.footerTerminal
       )}
     >
       <a
         title="Home"
         href="https://ochrefox.net"
-        className="flex shrink-0 items-center justify-center md:justify-start"
+        className="flex items-center justify-center shrink-0 md:justify-start"
       >
         <Image
           className="mx-2 rounded-full"
@@ -37,8 +37,8 @@ export default function Footer() {
         />
       </a>
 
-      <span className="flex shrink-0 flex-col items-center justify-center px-0 sm:ml-auto sm:mt-0 sm:justify-start md:px-6">
-        <div className="mt-4 inline-flex flex-row space-x-4">
+      <span className="flex flex-col items-center justify-center px-0 shrink-0 sm:ml-auto sm:mt-0 sm:justify-start md:px-6">
+        <div className="inline-flex flex-row mt-4 space-x-4">
           <a
             href="https://www.twitch.tv/ochrefox"
             className="text-gray-300 hover:text-white"
@@ -61,8 +61,8 @@ export default function Footer() {
             <IconBrandGithubFilled width="24" />
           </a>
         </div>
-        <div className="mt-2 flex flex-row">
-          <p className="text-center text-xs text-gray-300">
+        <div className="flex flex-row mt-2">
+          <p className="text-xs text-center text-gray-300">
             v{packageJson.version}
           </p>
         </div>
