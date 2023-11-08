@@ -12,6 +12,8 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Kbd } from "flowbite-react";
 import { Info } from "lucide-react";
+import clsx from "clsx";
+import styles from "../page.module.scss";
 
 const Print = () => {
   const { cards, rows, cols, totalCards } = useCardStore();
@@ -33,7 +35,7 @@ const Print = () => {
         </CardHeader>
         <CardContent>
           <Alert>
-            <Info className="h-4 w-4" />
+            <Info className="w-4 h-4" />
             <AlertTitle>Pro Tip</AlertTitle>
             <AlertDescription>
               <p>
@@ -50,7 +52,7 @@ const Print = () => {
         </CardContent>
       </Card>
       <ul
-        className="main-view bg-white grid gap-2"
+        className="grid gap-2 bg-white main-view"
         style={{
           gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
           gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
@@ -61,10 +63,22 @@ const Print = () => {
             return (
               <li
                 key={i}
-                className="inline-flex items-center justify-center relative z-0 flip-card text-black border border-black bg-white"
+                className="relative z-0 inline-flex items-center justify-center text-black bg-white border border-black flip-card"
               >
-                <div className="w-full h-full flex items-center justify-center text-center">
-                  {cards[i].front}
+                <div
+                  className={clsx(
+                    "flex items-center justify-center w-full h-full text-left",
+                    styles["fluid-card"]
+                  )}
+                >
+                  <p
+                    className={clsx(
+                      "w-full h-full",
+                      cards[i].front.length > 50 ? "text-xs" : "text-sm"
+                    )}
+                  >
+                    {cards[i].front}
+                  </p>
                 </div>
               </li>
             );
@@ -75,7 +89,7 @@ const Print = () => {
       </ul>
       <div className="pagebreak" />
       <ul
-        className="main-view bg-white grid gap-2"
+        className="grid gap-2 bg-white main-view"
         style={{
           gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
           gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
@@ -86,10 +100,22 @@ const Print = () => {
             return (
               <li
                 key={i}
-                className="inline-flex items-center justify-center relative z-0 flip-card text-black border border-black bg-white"
+                className="relative z-0 inline-flex items-center justify-center text-black bg-white border border-black flip-card"
               >
-                <div className="w-full h-full flex items-center justify-center text-center">
-                  {cards[i].back}
+                <div
+                  className={clsx(
+                    "flex items-center justify-center w-full h-full text-left",
+                    styles["fluid-card"]
+                  )}
+                >
+                  <p
+                    className={clsx(
+                      "w-full h-full",
+                      cards[i].back.length > 50 ? "text-xs" : "text-sm"
+                    )}
+                  >
+                    {cards[i].back}
+                  </p>
                 </div>
               </li>
             );
