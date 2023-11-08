@@ -243,7 +243,7 @@ export default function Home() {
                       {/* Card background */}
                       <motion.button
                         className={clsx(
-                          "card-front absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-100 dark:bg-gray-600 backface-hidden text-left",
+                          "card-front absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-100 dark:bg-gray-600 backface-hidden",
                           styles["fluid-card"]
                         )}
                         onClick={() => {
@@ -252,7 +252,6 @@ export default function Home() {
                       >
                         <p
                           className={clsx(
-                            "w-full h-full",
                             cards[i].front.length > 50 ? "text-xs" : "text-sm"
                           )}
                         >
@@ -261,7 +260,7 @@ export default function Home() {
                       </motion.button>
                       <motion.button
                         className={clsx(
-                          "card-back absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-300 dark:bg-gray-800 backface-hidden text-left",
+                          "card-back absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-300 dark:bg-gray-800 backface-hidden",
                           styles["fluid-card"]
                         )}
                         onClick={() => {
@@ -271,7 +270,6 @@ export default function Home() {
                       >
                         <p
                           className={clsx(
-                            "w-full h-full",
                             cards[i].back.length > 50 ? "text-xs" : "text-sm"
                           )}
                         >

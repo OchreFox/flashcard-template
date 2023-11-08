@@ -73,7 +73,6 @@ const Print = () => {
                 >
                   <p
                     className={clsx(
-                      "w-full h-full",
                       cards[i].front.length > 50 ? "text-xs" : "text-sm"
                     )}
                   >
@@ -110,7 +109,6 @@ const Print = () => {
                 >
                   <p
                     className={clsx(
-                      "w-full h-full",
                       cards[i].back.length > 50 ? "text-xs" : "text-sm"
                     )}
                   >
