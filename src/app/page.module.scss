@@ -96,8 +96,28 @@
   }
 }
 
-.fluid-card > p {
+.fluid-card > * {
   white-space: pre-wrap;
   display: block;
   word-break: break-word;
+}
+
+// Render card styles
+.render-card {
+  h1 {
+    @apply text-2xl font-bold;
+  }
+  h2 {
+    @apply text-xl font-bold;
+  }
+  h3 {
+    @apply text-lg font-bold;
+  }
+}
+
+.print {
+  @page {
+    size: Letter;
+    margin: 0;
+  }
 }

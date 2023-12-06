@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, stagger, animate, m } from "framer-motion";
-import MemoCard from "@/components/MemoCard";
+import { AnimatePresence, motion, stagger, animate } from "framer-motion";
+import MemoCard from "@/components/Card/MemoCard";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { Bomb, Printer, Undo2 } from "lucide-react";
+import { Bomb, Download, Printer, Undo2, Upload } from "lucide-react";
 import { IMemoCard, Orientation } from "@/lib/types";
 import { initialArray, useCardStore } from "@/lib/store";
 import GridSkeleton from "@/components/GridSkeleton";
@@ -26,6 +26,8 @@ import * as Portal from "@radix-ui/react-portal";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getOppositeOrientation, getTranslatedOrientation } from "@/lib/shared";
+import TinyCard from "@/components/Card/TinyCard";
+import { useToast } from "@/components/ui/use-toast";
 
 const staggerItems = stagger(0.01, { startDelay: 0.02 });
 
@@ -39,8 +41,8 @@ export default function Home() {
   );
   const [showAlert, setShowAlert] = useState(false);
   const previousOrientation = useRef<Orientation>(currentOrientation);
-
   const previousTotalCards = useRef(totalCards);
+  const { toast } = useToast();
 
   const onClose = () => {
     setSelectedCard(null);
@@ -55,6 +57,63 @@ export default function Home() {
   const onSave = (card: IMemoCard) => {
     console.log("onSave", card);
     setCards(cards.map((c) => (c.id === card.id ? card : c)));
+  };
+
+  const handleImport = () => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".json";
+    fileInput.addEventListener("change", (e) => {
+      const target = e.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const data = e.target?.result;
+          if (typeof data === "string") {
+            importData(data);
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+    fileInput.click();
+  };
+
+  const importData = (data: string) => {
+    const parsedData = JSON.parse(data);
+    setRows(parsedData.rows);
+    setCols(parsedData.cols);
+    if (Array.isArray(parsedData.cards)) {
+      setCards(parsedData.cards);
+    }
+    toast({
+      title: "Tarjetas Importadas",
+      description: "Se importaron los datos correctamente",
+    });
+  };
+
+  const exportData = () => {
+    // Create a data object with the rows and cols and the cards
+    const dataObject = {
+      rows,
+      cols,
+      cards,
+    };
+    const dataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(dataObject));
+    const downloadAnchorNode = document.createElement("a");
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "tarjetitas.json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+
+    toast({
+      title: "Tarjetas Exportadas",
+      description: "Se exportaron los datos correctamente",
+    });
   };
 
   useEffect(() => {
@@ -177,6 +236,14 @@ export default function Home() {
               step={1}
               onValueChange={(value) => setCols(value[0])}
             />
+            <Button className="mt-8" variant="secondary" onClick={handleImport}>
+              <Upload className="w-4 h-4 mr-2" />
+              Importar Datos
+            </Button>
+            <Button className="mt-8" variant="secondary" onClick={exportData}>
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Datos
+            </Button>
             <Link className="w-full mt-8" href="/print">
               <Button className="w-full">
                 <Printer className="w-4 h-4 mr-2" />
@@ -213,6 +280,7 @@ export default function Home() {
                 <MemoCard
                   cardId={selectedCard.id}
                   initialOrientation={currentOrientation}
+                  open={!!selectedCard}
                   onClose={onClose}
                   onSave={onSave}
                 />
@@ -230,54 +298,12 @@ export default function Home() {
             >
               {Array.from({ length: totalCards }).map((_, i) => {
                 return (
-                  <motion.li
+                  <TinyCard
+                    index={i}
                     key={i}
-                    layoutId={`card-${i}`}
-                    layout
-                    className="relative z-0 inline-flex items-center justify-center flip-card hover:shadow-xl hover:ring-blue-500 hover:ring-2 hover:border-blue-800"
-                    initial={{ scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <div className="absolute w-full h-full card-inner">
-                      {/* Card background */}
-                      <motion.button
-                        className={clsx(
-                          "card-front absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-100 dark:bg-gray-600 backface-hidden",
-                          styles["fluid-card"]
-                        )}
-                        onClick={() => {
-                          setSelectedCard(cards[i]);
-                        }}
-                      >
-                        <p
-                          className={clsx(
-                            cards[i].front.length > 50 ? "text-xs" : "text-sm"
-                          )}
-                        >
-                          {cards[i].front}
-                        </p>
-                      </motion.button>
-                      <motion.button
-                        className={clsx(
-                          "card-back absolute top-0 left-0 w-full h-full p-1 z-[-1] border border-black bg-gray-300 dark:bg-gray-800 backface-hidden",
-                          styles["fluid-card"]
-                        )}
-                        onClick={() => {
-                          setSelectedCard(cards[i]);
-                        }}
-                        style={{ rotateY: 180 }}
-                      >
-                        <p
-                          className={clsx(
-                            cards[i].back.length > 50 ? "text-xs" : "text-sm"
-                          )}
-                        >
-                          {cards[i].back}
-                        </p>
-                      </motion.button>
-                    </div>
-                  </motion.li>
+                    cards={cards}
+                    setSelectedCard={setSelectedCard}
+                  />
                 );
               })}
             </motion.ul>

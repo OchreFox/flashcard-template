@@ -11,9 +11,13 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Kbd } from "flowbite-react";
-import { Info } from "lucide-react";
+import { ArrowLeftCircle, Info, Printer } from "lucide-react";
 import clsx from "clsx";
 import styles from "../page.module.scss";
+import { Orientation } from "@/lib/types";
+import TinyCardContent from "@/components/Card/CardContent";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const Print = () => {
   const { cards, rows, cols, totalCards } = useCardStore();
@@ -27,30 +31,48 @@ const Print = () => {
   }, [hasHydrated]);
 
   return (
-    <div className="flex flex-col">
-      <Card className="self-center mt-4 print:hidden">
-        <CardHeader>
-          <CardTitle>Imprime esta página,</CardTitle>
-          <CardDescription>O guárdala como PDF</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Alert>
-            <Info className="w-4 h-4" />
-            <AlertTitle>Pro Tip</AlertTitle>
-            <AlertDescription>
-              <p>
-                Presiona <Kbd>Ctrl</Kbd>+<Kbd>P</Kbd>, y elige &quot;Guardar
-                como PDF&quot;.
-              </p>
-              <br />
-              <p>
-                <strong>Nota:</strong> Establece los márgenes a 0, y elige la
-                escala al 100%.
-              </p>
-            </AlertDescription>
-          </Alert>
-        </CardContent>
-      </Card>
+    <div className={clsx("flex flex-col", styles.print)}>
+      <div className="flex gap-4 items-center justify-center">
+        <Card className=" my-4 print:hidden">
+          <CardHeader>
+            <CardTitle>Imprime esta página,</CardTitle>
+            <CardDescription>Y guárdala como PDF</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Alert>
+              <Info className="w-4 h-4" />
+              <AlertTitle>Pro Tip</AlertTitle>
+              <AlertDescription>
+                <p>
+                  Presiona <Kbd>Ctrl</Kbd>+<Kbd>P</Kbd>, y elige &quot;Guardar
+                  como PDF&quot;.
+                </p>
+                <br />
+                <p>
+                  <strong>Nota:</strong> Establece los márgenes a 0, y elige la
+                  escala al 100%.
+                </p>
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+        <div className="flex flex-col gap-4">
+          <Button
+            variant="default"
+            className="self-center print:hidden"
+            onClick={() => window.print()}
+          >
+            <Printer className="w-4 h-4 mr-2" />
+            Imprimir
+          </Button>
+          <Link href="/" className="inline-flex items-center justify-center">
+            <Button variant="secondary" className="print:hidden">
+              <ArrowLeftCircle className="w-4 h-4 mr-2" />
+              Volver al inicio
+            </Button>
+          </Link>
+        </div>
+      </div>
       <ul
         className="grid gap-2 bg-white main-view"
         style={{
@@ -71,13 +93,11 @@ const Print = () => {
                     styles["fluid-card"]
                   )}
                 >
-                  <p
-                    className={clsx(
-                      cards[i].front.length > 50 ? "text-xs" : "text-sm"
-                    )}
-                  >
-                    {cards[i].front}
-                  </p>
+                  <TinyCardContent
+                    cards={cards}
+                    index={i}
+                    orientation={Orientation.Front}
+                  />
                 </div>
               </li>
             );
@@ -107,13 +127,11 @@ const Print = () => {
                     styles["fluid-card"]
                   )}
                 >
-                  <p
-                    className={clsx(
-                      cards[i].back.length > 50 ? "text-xs" : "text-sm"
-                    )}
-                  >
-                    {cards[i].back}
-                  </p>
+                  <TinyCardContent
+                    cards={cards}
+                    index={i}
+                    orientation={Orientation.Back}
+                  />
                 </div>
               </li>
             );

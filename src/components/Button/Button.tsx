@@ -154,7 +154,7 @@ const Button = ({
       />
       <motion.div
         className={clsx(
-          "px-4 py-2 border-4 flex flex-row select-none",
+          "px-4 py-2 border-4 flex flex-row select-none items-center",
           variant && getButtonVariant(variant),
           isActive && styles.active,
           styles.button,
